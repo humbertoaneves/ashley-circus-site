@@ -36,15 +36,13 @@ module.exports = async (req, res) => {
       universe_domain: process.env.GOOGLE_UNIVERSE_DOMAIN || 'googleapis.com'
     };
 
-    const jwtClient = new google.auth.JWT(
-      key.client_email,
-      null,
-      key.private_key,
-      ['https://www.googleapis.com/auth/spreadsheets']
-    );
+    const auth = new google.auth.GoogleAuth({
+      credentials: key,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets']
+    });
 
-    await jwtClient.authorize();
-    const sheets = google.sheets({ version: 'v4', auth: jwtClient });
+    const authClient = await auth.getClient();
+    const sheets = google.sheets({ version: 'v4', auth: authClient });
 
     // Escreve os cabeçalhos na primeira linha (opcional, pode remover se já estiver na planilha)
     const headers = [[

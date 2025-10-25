@@ -40,14 +40,14 @@ module.exports = async (req, res) => {
 
   try {
     const { google } = require('googleapis');
-    const jwtClient = new google.auth.JWT(
-      key.client_email,
-      null,
-      key.private_key,
-      ['https://www.googleapis.com/auth/spreadsheets']
-    );
-    await jwtClient.authorize();
-    const sheets = google.sheets({ version: 'v4', auth: jwtClient });
+    
+    const auth = new google.auth.GoogleAuth({
+      credentials: key,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets']
+    });
+
+    const authClient = await auth.getClient();
+    const sheets = google.sheets({ version: 'v4', auth: authClient });
 
     const adultos = Number(body.adultos || 0);
     const criancas = Number(body.criancas || 0);
