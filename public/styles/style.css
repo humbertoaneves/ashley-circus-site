@@ -546,6 +546,43 @@ input[type="text"], input[type="number"]{
 .btn-qty:disabled{opacity:.45;border-color:rgba(100,162,255,.5);color:rgba(100,162,255,.5);cursor:not-allowed}
 .success{color:#64a2ff;margin-top:12px;font-weight:700}
 
+/* Loading states */
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn:disabled:hover {
+  transform: none !important;
+  filter: none !important;
+}
+
+.btn:disabled::after {
+  display: none;
+}
+
+/* Form loading state */
+form.loading {
+  pointer-events: none;
+}
+
+form.loading input,
+form.loading button {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Loading animation for button text */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.btn.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
 /* FOOTER */
 .site-footer{background:var(--azul-marinho);color:var(--dourado-1);padding:24px 18px;margin-top:30px;text-align:center;border-top:4px solid rgba(0,0,0,0.05)}
 .site-footer p{margin:0;font-family:var(--font-serif)}

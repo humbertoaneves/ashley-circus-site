@@ -60,24 +60,24 @@ form.addEventListener('submit', async (e) => {
   }
 
   const submitBtn = form.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.textContent;
+  
+  // Mostra loading e bloqueia o formulário
   submitBtn.disabled = true;
+  submitBtn.textContent = '⏳ Enviando...';
+  submitBtn.classList.add('loading');
+  form.classList.add('loading');
 
   try {
-    const [resp, initsheet] = await Promise.all([
-      fetch('/api/confirmar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }),
-      fetch('/api/init-sheet', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-    ]);
+    // Chama apenas a API de confirmação (evita duplicação)
+    const resp = await fetch('/api/confirmar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
-    if (!resp.ok || !initsheet.ok) {
-      const errorMsg = await initsheet.text();
+    if (!resp.ok) {
+      const errorMsg = await resp.text();
       throw new Error(errorMsg || 'Falha ao enviar dados para a planilha');
     }
 
@@ -94,6 +94,10 @@ form.addEventListener('submit', async (e) => {
     setTimeout(() => { successEl.hidden = true; }, 6000);
     console.error('Erro ao enviar:', err);
   } finally {
+    // Restaura o botão e habilita o formulário
     submitBtn.disabled = false;
+    submitBtn.textContent = originalBtnText;
+    submitBtn.classList.remove('loading');
+    form.classList.remove('loading');
   }
 });
