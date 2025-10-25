@@ -1,4 +1,5 @@
 
+/* Updated: 2024-12-25 - Force cache refresh */
 :root{
   --azul-marinho:#002855;
   --vermelho-salsa:#B4202A;
@@ -11,7 +12,7 @@
   --font-serif: "Playfair Display", serif;
   --logo-crop-width:750px;      /* even larger width for bigger logo */
   --logo-crop-height:450px;     /* even larger height for bigger logo */
-  --logo-object-position:30% 70%; /* move logo slightly to the left */
+  --logo-object-position:50% 50%; /* center logo perfectly */
   --sparkle-1: rgba(255,215,0,0.95); /* gold */
   --sparkle-2: rgba(255,215,0,0.6);  /* softer gold */
   --sparkle-size: 4px; /* larger dots */
@@ -51,15 +52,15 @@ body{
   position:relative;
   margin:0 auto;
   width:min(880px, 96%);
-  padding:8vh 8vw 6vh; /* reduced padding to bring buttons up */
+  padding:4vh 8vw 2vh !important; /* significantly reduced padding */
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center; /* center content within safe area */
-  gap:8px;
+  justify-content:center;
+  gap:4px !important; /* minimal gap */
   background-repeat:no-repeat;
   background-position:center 8px;
-  background-size:contain; /* ensure full frame visible */
+  background-size:contain;
 }
 .logo{display:block;width:100%;height:100%;margin:0 auto;border-radius:0}
 .count-days{
@@ -233,12 +234,13 @@ body{
   overflow:hidden;
   border-radius:10px;
 }
+/* Logo positioning - force center on all devices */
 .logo-crop img{
   display:block;
   width:100%;
   height:100%;
   object-fit:contain;
-  object-position:var(--logo-object-position);
+  object-position:center center !important; /* force center positioning */
 }
 
 /* hero::after removed per request */
@@ -584,7 +586,14 @@ form.loading button {
 }
 
 /* FOOTER */
-.site-footer{background:var(--azul-marinho);color:var(--dourado-1);padding:24px 18px;margin-top:30px;text-align:center;border-top:4px solid rgba(0,0,0,0.05)}
+.site-footer{
+  background:#002855 !important;
+  color:var(--dourado-1);
+  padding:24px 18px;
+  margin-top:30px;
+  text-align:center;
+  border-top:4px solid rgba(0,0,0,0.05)
+}
 .site-footer p{margin:0;font-family:var(--font-serif)}
 .footer-gif{display:block;margin:0 auto 8px;width:140px;height:140px;opacity:.4;filter:drop-shadow(0 4px 12px rgba(0,0,0,.2));border-radius:50%;object-fit:cover}
 
@@ -602,14 +611,28 @@ form.loading button {
   .hero{padding-bottom:22vh}
   .frame{padding-bottom:26vh}
 }
+/* Mobile specific adjustments */
 @media (max-width:560px){
   .card{flex:1 1 100%}
   .row{flex-direction:column}
   .hero{padding-bottom:10vh}
-  .frame{padding:80px 24px 64px;width:105%;background-size:contain}
-  .logo-crop{height:300px;width:min(500px, 90%)}
+  .frame{
+    padding:60px 20px 40px !important; /* reduced mobile padding */
+    width:105%;
+    background-size:contain;
+    gap:2px !important; /* minimal gap on mobile */
+  }
+  .logo-crop{
+    height:280px;
+    width:min(480px, 90%);
+    margin:0 auto 8px !important; /* center logo container */
+  }
+  .logo-crop img{
+    object-position:center center !important; /* force perfect center */
+    transform:translateX(0) !important; /* prevent any shifting */
+  }
   .lead{font-size:20px;margin:2px 0 4px}
-  .cta-buttons{margin-top:4px}
+  .cta-buttons{margin-top:8px !important; /* bring buttons closer */}
   .ticket-btn{width:100%;max-width:320px;padding:12px 18px;font-size:16px}
   .ticket-btn::before{display:none}
   .wish-list{width:100%;max-width:320px;padding:12px 18px;font-size:16px}
@@ -618,6 +641,17 @@ form.loading button {
   /* Reduce fireworks on mobile for better performance */
   .hero::before{animation-duration:6s; opacity:0.7}
   .hero .hero-inner::before{animation-duration:7s; opacity:0.6}
+}
+
+/* Desktop specific adjustments */
+@media (min-width: 900px){
+  .frame{
+    padding:3vh 8vw 1vh !important; /* minimal desktop padding */
+    gap:2px !important; /* minimal gap on desktop */
+  }
+  .cta-buttons{
+    margin-top:6px !important; /* bring buttons closer to logo */
+  }
 }
 /* Fonte para títulos e chamadas */
 h1, h2, h3, .hero-title, .section-title {
