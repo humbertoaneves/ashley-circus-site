@@ -17,6 +17,7 @@ module.exports = async (req, res) => {
   }
 
   const sheetId = process.env.GOOGLE_SHEET_ID;
+  const backupSheetId = process.env.GOOGLE_BACKUP_SHEET_ID;
 
   const key = process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY
     ? {
@@ -35,7 +36,7 @@ module.exports = async (req, res) => {
     : null;
 
   if (!sheetId || !key) {
-    return res.status(500).send('Credenciais ou ID da planilha ausentes');
+    return res.status(500).send('Credenciais ou ID da planilha principal ausentes');
   }
 
   try {
@@ -64,14 +65,41 @@ module.exports = async (req, res) => {
 
     const range = process.env.GOOGLE_SHEET_RANGE || 'A:F';
 
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: sheetId,
-      range,
-      valueInputOption: 'USER_ENTERED',
-      resource: { values }
-    });
+    // Função para enviar dados para uma planilha
+    const appendToSheet = async (spreadsheetId, sheetName = '') => {
+      try {
+        await sheets.spreadsheets.values.append({
+          spreadsheetId,
+          range,
+          valueInputOption: 'USER_ENTERED',
+          resource: { values }
+        });
+        console.log(`✅ Dados salvos na planilha ${sheetName}`);
+        return true;
+      } catch (error) {
+        console.error(`❌ Erro ao salvar na planilha ${sheetName}:`, error.message);
+        return false;
+      }
+    };
 
-    return res.status(200).send('Dados confirmados com sucesso!');
+    // Envia para a planilha principal
+    const mainSheetSuccess = await appendToSheet(sheetId, 'Principal');
+
+    // Envia para a planilha backup (se configurada)
+    let backupSheetSuccess = true;
+    if (backupSheetId) {
+      backupSheetSuccess = await appendToSheet(backupSheetId, 'Backup');
+    }
+
+    // Retorna sucesso se pelo menos uma planilha foi atualizada
+    if (mainSheetSuccess) {
+      const message = backupSheetId 
+        ? (backupSheetSuccess ? 'Dados confirmados e salvos em ambas as planilhas!' : 'Dados confirmados na planilha principal (backup falhou)')
+        : 'Dados confirmados com sucesso!';
+      return res.status(200).send(message);
+    } else {
+      return res.status(500).send('Não foi possível salvar os dados em nenhuma planilha');
+    }
   } catch (err) {
     console.error('Erro ao gravar no Google Sheets:', err);
     return res.status(500).send('Não foi possível confirmar os dados no momento');
