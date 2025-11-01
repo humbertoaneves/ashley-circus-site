@@ -630,6 +630,7 @@ form.loading button {
   .logo-crop img{
     object-position:center center !important; /* force perfect center */
     transform:translateX(0) !important; /* prevent any shifting */
+    margin: auto -20px;
   }
   .lead{font-size:20px;margin:2px 0 4px}
   .cta-buttons{margin-top:8px !important; /* bring buttons closer */}
